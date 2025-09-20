@@ -1,0 +1,2 @@
+# AbstractionAndIncapsulation
+Абстракция и инкапсуляция
