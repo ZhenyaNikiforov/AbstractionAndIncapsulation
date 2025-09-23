@@ -15,31 +15,23 @@ using namespace std;
 class Adress //- Методы публичные, но поля приватные;
 {
 public:
-  Adress() : town("A"), street("B"), house("C"), apartament("D") {};
-  string get_output_adress()
+  Adress(string town = "A", string street = "B", string house = "C", string apartament = "D")
+  {
+    this->town = town;
+    this->street = street;
+    this->house = house;
+    this->apartament = apartament;
+  };
+
+  string get_output_adress() //- Возвращает строку информации;
   {
     return this->town + ", " + this->street + ", " + this->house + ", " + this->apartament;
   };
-  void setTown(string t)
-  {
-    this->town = t;
-  };
-  void setStreet(string s)
-  {
-    this->street = s;
-  };
-  void setHouse(string h)
-  {
-    this->house = h;
-  };
-  void setApartament(string a)
-  {
-    this->apartament = a;
-  };
-  string getTownName()
+
+  string getTownName() //- Возвращает имя города;
   {
     return this->town;
-  }
+  };
 
 private:
   string town;
@@ -48,38 +40,10 @@ private:
   string apartament;
 };
 
-void sor(Adress *arr, int size)
+void sor(vector<Adress> &adresses)
 {
-  vector<string> names; //-Сделали пустой вектор;
-
-  for (int i = 0; i < size; i++)
-  {
-    names.push_back(arr[i].getTownName()); //-Добавили имена городов;
-  };
-
-  sort(names.begin(), names.end()); //- Сортируем массив по алфавиту;
-
-  Adress *doubleArray = new Adress[size]; //-Сделали второй массив;
-
-  for (int i = 0; i < size; i++) //-Берём первый номер...
-  {
-    for (int j = 0; j < size; j++) //-...прокручиваем весь массив объектов...
-    {
-      if (arr[j].getTownName() == names[i]) //...если город совпадает с вектором...
-      {
-        doubleArray[i] = arr[j]; //...заносим во второй массив объект из первого...
-        arr[j].setTown("");      //...меняем имя города в первом массиве, чтоб не взять второй раз...
-        break;                   //-...и выходим из цикла...
-      };
-    };
-  };
-
-  for (int i = 0; i < size; i++)
-  {
-    arr[i] = doubleArray[i]; //- Заносим в первый массив отсортированный второй;
-  };
-
-  delete[] doubleArray; //- Чистим память за вторым массивом;
+  sort(adresses.begin(), adresses.end(), [](Adress &a, Adress &b)
+       { return a.getTownName() < b.getTownName(); });
 };
 
 int main()
@@ -95,10 +59,10 @@ int main()
     return 0;       //-Выходим из функции main;
   };
 
-  int numberObjects = 0;                        //-Кол-во объектов;
-  inFile >> numberObjects;                      //-Читаем из файла;
-  Adress *adresses = new Adress[numberObjects]; /*
-   Сделали массив объектов типа Adress*/
+  int numberObjects = 0;   //-Кол-во объектов;
+  inFile >> numberObjects; //-Читаем из файла;
+  vector<Adress> adresses; /*
+    Сделали вектор объектов типа Adress*/
 
   for (int i = 0; i < numberObjects; i++)
   {
@@ -112,25 +76,21 @@ int main()
     inFile >> h;
     inFile >> a;
 
-    adresses[i].setTown(t);
-    adresses[i].setStreet(s);
-    adresses[i].setHouse(h);
-    adresses[i].setApartament(a);
+    adresses.push_back(Adress(t, s, h, a));
   }
 
   inFile.close(); //-Закрываем файл-источник;
 
-  sor(adresses, numberObjects); //-Сортируем массив по алфавиту;
+  sor(adresses); //-Сортируем массив по алфавиту;
 
-  ofstream outFile("./out.txt"); //- Открываем файл для записи;
+  ofstream outFile("./out.txt");    //- Открываем файл для записи;
+  outFile << numberObjects << endl; //- Пишем кол-во элементов;
 
   for (int i = 0; i < numberObjects; i++)
   {
     outFile << adresses[i].get_output_adress() << endl; //- Записываем в файл строчки;
   };
 
-  outFile.close();   //- Закрываем файл;
-  delete[] adresses; //- Чистим память за массивом;
-
+  outFile.close(); //- Закрываем файл;
   return 0;
 }
