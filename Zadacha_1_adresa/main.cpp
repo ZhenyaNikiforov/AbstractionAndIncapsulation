@@ -6,33 +6,20 @@
 #include <iostream>
 #include <fstream>   //- Для работы с файлами
 #include <Windows.h> //- Для кириллицы
+#include <vector>    //- Для вектора
 using namespace std;
 
 class Adress //- Класс для создания объектов
 {
 public:
-  Adress() : town("A"), street("B"), house("C"), apartament("D") {}; /*
-   Это чтоб было легче при тестировании, если инициализация не вышла*/
-
-  void setTown(string t)
+  Adress(string town = "A", string street = "B", string house = "C", string apartament = "D") /*
+     Это чтоб было легче при тестировании, если инициализация не вышла*/
   {
-    this->town = t;
+    this->town = town;
+    this->street = street;
+    this->house = house;
+    this->apartament = apartament;
   };
-
-  void setStreet(string s)
-  {
-    this->street = s;
-  };
-
-  void setHouse(string h)
-  {
-    this->house = h;
-  }
-
-  void setApartament(string a)
-  {
-    this->apartament = a;
-  }
 
   string get_output_address()
   {
@@ -62,8 +49,8 @@ int main()
   int objectNumber = 0;
   inFile >> objectNumber; //- Кол-во объектов
 
-  Adress *adresses = new Adress[objectNumber]; /*-
-   Сделали динамич. массив объектов типа Adress-*/
+  vector<Adress> adresses; /*-
+    Сделали пустой вектор типа Adress-*/
 
   for (int i = 0; i < objectNumber; i++)
   {
@@ -77,25 +64,19 @@ int main()
     inFile >> house;
     inFile >> apartament;
 
-    adresses[i].setTown(town);
-    adresses[i].setStreet(street);
-    adresses[i].setHouse(house);
-    adresses[i].setApartament(apartament);
+    adresses.push_back(Adress(town, street, house, apartament));
   };
-
-  inFile.close(); //-Закрываем файл-источник;
 
   ofstream outFile("./out.txt"); /*-
    Открываем файл, в который будем записывать-*/
 
-  outFile << objectNumber << endl;
+  outFile << objectNumber << endl; //- Записываем кол-во элементов;
 
   for (int i = (objectNumber - 1); i > -1; i--)
   {
     outFile << adresses[i].get_output_address() << endl;
   }
 
-  outFile.close();   //-Закрываем файл-приёмник;
-  delete[] adresses; //-Удаляем динамич. массив;
-  return 0;          //-Выходим из функции main();
+  outFile.close(); //-Закрываем файл-приёмник;
+  return 0;        //-Выходим из функции main();
 }
